@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class EatHoney : MonoBehaviour
@@ -12,14 +13,17 @@ public class EatHoney : MonoBehaviour
     [SerializeField] private string hiveTag = "Hive";
     Animator _animator;
 
+    private bool canMove;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         acceleration = Vector3.zero;
         velocity = Vector3.zero;
-        maxSpeed = 0.5f;
+        maxSpeed = 0.2f;
         mass = 5f;
         maxForce = 0.1f;
+        canMove = true;
 
         _animator = GetComponent<Animator>();
     }
@@ -27,28 +31,36 @@ public class EatHoney : MonoBehaviour
     void FixedUpdate()
     {
         hive = GameObject.FindGameObjectWithTag(hiveTag);
-        FindNearestHive();
+        if (canMove)
+        {
+            FindNearestHive();
 
-        if (hive == null) return;
+            if (hive == null) return;
 
-        velocity += acceleration;
-        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-        this.transform.position += velocity;
+            velocity += acceleration;
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+            this.transform.position += velocity;
 
-        transform.rotation = Quaternion.LookRotation(velocity, Vector3.up);
+            transform.rotation = Quaternion.LookRotation(velocity, Vector3.up);
+        }
 
         if (velocity.sqrMagnitude > Vector3.zero.sqrMagnitude)
         {
+            _animator.SetBool("Run Backward", false);
+            _animator.SetBool("Sit", false);
             _animator.SetBool("Run Forward", true);
         }
         else if (velocity.sqrMagnitude < Vector3.zero.sqrMagnitude)
         {
+            _animator.SetBool("Run Forward", false);
+            _animator.SetBool("Sit", false);
             _animator.SetBool("Run Backward", true);
         }
         else
         {
             _animator.SetBool("Run Forward", false);
             _animator.SetBool("Run Backward", false);
+            _animator.SetBool("Sit", true);
         }
 
         acceleration = Vector3.zero;
@@ -91,5 +103,21 @@ public class EatHoney : MonoBehaviour
         steeringForce = Vector3.ClampMagnitude(steeringForce, maxForce);
 
         this.ApplyForce(steeringForce);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Hive")
+        {
+            this.velocity = Vector3.zero;
+            StartCoroutine(Eat(5));
+        }
+    }
+
+    IEnumerator Eat(float duration)
+    {
+        canMove = false;
+        yield return new WaitForSeconds(duration);
+        canMove = true;
     }
 }

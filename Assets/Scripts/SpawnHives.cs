@@ -35,17 +35,23 @@ public class SpawnHives : MonoBehaviour
                     tree.position.z * terrain.terrainData.size.z
                 );
 
-                Vector3 worldPosBee = new Vector3(
-                    tree.position.x * terrain.terrainData.size.x + 2f,
-                    tree.position.y * terrain.terrainData.size.y + 1f,
-                    tree.position.z * terrain.terrainData.size.z
-                );
-
                 hive.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                 bee.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
 
                 GameObject hiveInstance = Instantiate(hive, worldPosHive, Quaternion.Euler(-90, 0, 0));
-                GameObject beeInstance = Instantiate(bee, worldPosBee, Quaternion.identity);
+
+                float numBeesPerTree = Random.Range(1, 3);
+                for (int i = 0; i < numBeesPerTree; i++)
+                {
+                    float xFromTree = Random.Range(-5, 5);
+                    Vector3 worldPosBee = new Vector3(
+                        tree.position.x * terrain.terrainData.size.x + xFromTree,
+                        tree.position.y * terrain.terrainData.size.y + 1f,
+                        tree.position.z * terrain.terrainData.size.z
+                    );
+
+                    GameObject beeInstance = Instantiate(bee, worldPosBee, Quaternion.identity);
+                }
 
                 hiveInstance.tag = "Hive";
                 hiveInstance.AddComponent<Honey>();

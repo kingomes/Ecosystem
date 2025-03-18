@@ -1,15 +1,19 @@
+using System.Collections;
 using UnityEngine;
 
 public class Honey : MonoBehaviour
 {
-    public bool taken = false;
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Bear" && (!taken))
+        if (other.tag == "Bear")
         {
-            taken = true;
-
-            Destroy(this.gameObject);
+            StartCoroutine(GetEaten(5));
         }
+    }
+
+    IEnumerator GetEaten(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        Destroy(this.gameObject);
     }
 }
