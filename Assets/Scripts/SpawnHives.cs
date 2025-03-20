@@ -51,6 +51,11 @@ public class SpawnHives : MonoBehaviour
                     );
 
                     GameObject beeInstance = Instantiate(bee, worldPosBee, Quaternion.identity);
+                    beeInstance.AddComponent<Swarm>();
+                    beeInstance.AddComponent<Bee>();
+                    beeInstance.AddComponent<CapsuleCollider>();
+                    CapsuleCollider triggerCollider = beeInstance.GetComponent<CapsuleCollider>();
+                    triggerCollider.isTrigger = true;
                 }
 
                 hiveInstance.tag = "Hive";

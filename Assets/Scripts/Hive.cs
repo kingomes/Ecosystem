@@ -7,7 +7,7 @@ public class Honey : MonoBehaviour
     {
         if (other.tag == "Bear")
         {
-            StartCoroutine(GetEaten(5));
+            StartCoroutine(GetEaten(3));
         }
     }
 

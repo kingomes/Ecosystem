@@ -10,7 +10,7 @@ public class EatHoney : MonoBehaviour
     [SerializeField] private float maxForce;
 
     private GameObject hive;
-    [SerializeField] private string hiveTag = "Hive";
+    private string hiveTag = "Hive";
     Animator _animator;
 
     private bool canMove;
@@ -110,7 +110,7 @@ public class EatHoney : MonoBehaviour
         if (other.tag == "Hive")
         {
             this.velocity = Vector3.zero;
-            StartCoroutine(Eat(5));
+            StartCoroutine(Eat(3));
         }
     }
 
