@@ -24,7 +24,9 @@ public class Swarm : MonoBehaviour
 
     void FixedUpdate()
     {
-        SwarmBear();
+        if (bear != null) {
+            SwarmBear();
+        }
 
         velocity += acceleration;
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);

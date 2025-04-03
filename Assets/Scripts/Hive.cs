@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Honey : MonoBehaviour
+public class Hive : MonoBehaviour
 {
     void OnTriggerEnter(Collider other)
     {

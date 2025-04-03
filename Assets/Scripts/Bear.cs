@@ -26,12 +26,16 @@ public class Bear : MonoBehaviour
 
     public void TakeDamage(int damageTaken)
     {
-        this.health -= damageTaken;
+        if (this.gameObject != null) {
+            this.health -= damageTaken;
+        }
     }
 
     public void Heal(int healthGained)
     {
-        this.health += healthGained;
+        if (this.gameObject != null) {
+            this.health += healthGained;
+        }
     }
 
     public void Die()

@@ -118,6 +118,9 @@ public class EatHoney : MonoBehaviour
     {
         canMove = false;
         yield return new WaitForSeconds(duration);
+        int healthGained = Random.Range(2, 8);
+        this.GetComponent<Bear>().Heal(healthGained);
+        Debug.Log(this.GetComponent<Bear>().GetHealth());
         canMove = true;
     }
 }
