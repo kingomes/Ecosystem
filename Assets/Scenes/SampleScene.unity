@@ -629,6 +629,8 @@ MonoBehaviour:
   maxSpeed: 0
   mass: 0
   maxForce: 0
+  xOffset: 0
+  yOffset: 0
 --- !u!4 &567653218 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b7822eb5951163b48830b6d9bcbf48b4, type: 3}
