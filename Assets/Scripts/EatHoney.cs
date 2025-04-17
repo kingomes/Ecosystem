@@ -53,6 +53,7 @@ public class EatHoney : MonoBehaviour
 
             velocity += acceleration;
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+            velocity.y = 0;
             this.transform.position += velocity;
 
             transform.rotation = Quaternion.LookRotation(velocity, Vector3.up);
@@ -157,6 +158,7 @@ public class EatHoney : MonoBehaviour
         {
             this.velocity = Vector3.zero;
             StartCoroutine(Eat(3));
+            StartCoroutine(bear.GetComponent<BearHUD>().UpdateTimeEating(3));
         }
     }
 

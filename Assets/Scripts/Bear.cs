@@ -6,6 +6,8 @@ public class Bear : MonoBehaviour
     private int health;
     private int hunger;
     
+    [SerializeField] BearHUD bearHUD;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -20,6 +22,8 @@ public class Bear : MonoBehaviour
         {
             Die();
         }
+        StartCoroutine(bearHUD.UpdateHealth());
+        StartCoroutine(bearHUD.UpdateHunger());
     }
 
     // Getter methods
