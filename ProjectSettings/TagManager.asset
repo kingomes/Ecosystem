@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Hive
   - Bear
+  - EatingBar
   layers:
   - Default
   - TransparentFX

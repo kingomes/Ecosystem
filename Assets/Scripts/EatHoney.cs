@@ -18,6 +18,11 @@ public class EatHoney : MonoBehaviour
 
     private bool canMove;
     Bear bear;
+    [SerializeField] private BearHUD bearHUD;
+
+    [SerializeField] private ProgressBar eatingBar;
+
+    private float duration;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -36,6 +41,8 @@ public class EatHoney : MonoBehaviour
 
         bear = this.GetComponent<Bear>();
         bear.StartCoroutine(bear.LoseHunger(0.5f));
+
+        eatingBar.gameObject.SetActive(false);
     }
 
     void FixedUpdate()
@@ -103,6 +110,11 @@ public class EatHoney : MonoBehaviour
         acceleration = Vector3.zero;
     }
 
+    public float GetDuration()
+    {
+        return this.duration;
+    }
+
     private void ApplyForce(Vector3 force)
     {
         acceleration += force / mass;
@@ -146,8 +158,10 @@ public class EatHoney : MonoBehaviour
         float perlinY = Mathf.PerlinNoise(yOffset, 0);
         float xVelocity = Unity.Mathematics.math.remap(0, 1, -this.maxSpeed, this.maxSpeed, perlinX);
         float zVelocity = Unity.Mathematics.math.remap(0, 1, -this.maxSpeed, this.maxSpeed, perlinY);
-        this.xOffset += 0.01f;
-        this.yOffset += 0.01f;
+        float xIncrement = Random.Range(-0.05f, 0.05f);
+        float yIncrement = Random.Range(-0.05f, 0.05f);
+        this.xOffset += xIncrement;
+        this.yOffset += yIncrement;
         velocity.x = xVelocity;
         velocity.z = zVelocity;
     }
@@ -158,12 +172,18 @@ public class EatHoney : MonoBehaviour
         {
             this.velocity = Vector3.zero;
             StartCoroutine(Eat(3));
-            StartCoroutine(bear.GetComponent<BearHUD>().UpdateTimeEating(3));
         }
     }
 
     IEnumerator Eat(float duration)
     {
+        this.duration = duration;
+        while (this.duration > 0)
+        {
+            eatingBar.gameObject.SetActive(true);
+            StartCoroutine(bearHUD.UpdateTimeEating());
+            this.duration -= 1;
+        }
         canMove = false;
         yield return new WaitForSeconds(duration);
         int healthGained = Random.Range(2, 8);

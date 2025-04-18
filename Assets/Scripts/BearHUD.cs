@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class BearHUD : MonoBehaviour
 {
-    [SerializeField] ProgressBar healthBar;
-    [SerializeField] ProgressBar hungerBar;
-    [SerializeField] ProgressBar eatingBar;
+    [SerializeField] private ProgressBar healthBar;
+    [SerializeField] private ProgressBar hungerBar;
+    [SerializeField] private ProgressBar eatingBar;
 
     Bear bear;
     private string bearTag = "Bear";
@@ -19,6 +19,7 @@ public class BearHUD : MonoBehaviour
         this.bear = bear;
         healthBar.SetProgress((float) bear.GetHealth());
         hungerBar.SetProgress((float) bear.GetHunger());
+        eatingBar.SetProgress((float) bear.GetComponent<EatHoney>().GetDuration());
     }
 
     public IEnumerator UpdateHealth() {
@@ -27,7 +28,7 @@ public class BearHUD : MonoBehaviour
     public IEnumerator UpdateHunger() {
         yield return hungerBar.SetProgressSmooth((float) bear.GetHunger());
     }
-    public IEnumerator UpdateTimeEating(float timeEating) {
-        yield return hungerBar.SetProgressSmooth((float) timeEating);
+    public IEnumerator UpdateTimeEating() {
+        yield return eatingBar.SetProgressSmooth((float) bear.GetComponent<EatHoney>().GetDuration());
     }
 }
