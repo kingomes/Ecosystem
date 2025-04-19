@@ -1,13 +1,16 @@
+using System.Collections;
 using UnityEngine;
 
 public class Bee : MonoBehaviour
 {
     private int health;
+    private int hunger;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         health = 1;
+        hunger = 100;
     }
 
     // Update is called once per frame
@@ -24,6 +27,11 @@ public class Bee : MonoBehaviour
         return this.health;
     }
 
+    public int GetHunger()
+    {
+        return this.hunger;
+    }
+
     public void Sting(Bear target)
     {
         this.health -= 1;
@@ -31,9 +39,26 @@ public class Bee : MonoBehaviour
         target.TakeDamage(damageGiven);
     }
 
-    public void Heal(int healthGained)
+    public IEnumerator LoseHunger(float duration)
     {
-        this.health += healthGained;
+        while (true)
+        {
+            yield return new WaitForSeconds(duration);
+            this.hunger--;
+
+            if (this.hunger <= 0)
+            {
+                this.hunger = 0;
+            }
+        }
+    }
+
+    public void GainHunger(int hungerGained)
+    {
+        if (this.gameObject != null)
+        {
+            this.hunger += hungerGained;
+        }
     }
 
     public void Die()

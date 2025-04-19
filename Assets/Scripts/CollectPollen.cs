@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class EatHoney : MonoBehaviour
+public class CollectPollen : MonoBehaviour
 {
     // bear's forces
     [SerializeField] private Vector3 acceleration;
@@ -25,8 +25,8 @@ public class EatHoney : MonoBehaviour
     private float turnIntervalTimer;
 
     // hive game objects to be eaten
-    private GameObject closestHive;
-    private string hiveTag = "Hive";
+    private GameObject closestPollen;
+    private string pollenTag = "Pollen";
 
     // makes the animations work
     Animator _animator;
@@ -37,11 +37,9 @@ public class EatHoney : MonoBehaviour
     private float duration;
 
     // the bear and its UI elements
-    Bear bear;
-    [SerializeField] private BearHUD bearHUD;
-    [SerializeField] private ProgressBar eatingBar;
-    
-    // how far the bear can see hives
+    Bee bee;
+
+    // how far the bees can see pollen
     float searchRadius = 10f;
     float maxSearchRadius = 50f;
     float searchGrowthRate = 5f;
@@ -61,10 +59,8 @@ public class EatHoney : MonoBehaviour
 
         _animator = GetComponent<Animator>();
 
-        bear = this.GetComponent<Bear>();
-        bear.StartCoroutine(bear.LoseHunger(0.5f));
-
-        eatingBar.gameObject.SetActive(false);
+        bee = this.GetComponent<Bee>();
+        bee.StartCoroutine(bee.LoseHunger(0.5f));
 
         walkIntervalDuration = Random.Range(2, 5);
         walkIntervalTimer = 0;
@@ -77,9 +73,9 @@ public class EatHoney : MonoBehaviour
     {
         if (canMove)
         {
-            if (bear.GetHunger() < 20)
+            if (bee.GetHunger() < 20)
             {
-                FindNearestHive();
+                FindNearestPollen();
             }
             else
             {
@@ -93,54 +89,7 @@ public class EatHoney : MonoBehaviour
 
             transform.rotation = Quaternion.LookRotation(velocity, Vector3.up);
         }
-
-        if (velocity.sqrMagnitude > Vector3.zero.sqrMagnitude && Mathf.Abs(velocity.sqrMagnitude) >= 0.1)
-        {
-            _animator.SetBool("Run Backward", false);
-            _animator.SetBool("Sit", false);
-            _animator.SetBool("Walk Forward", false);
-            _animator.SetBool("Walk Backward", false);
-            _animator.SetBool("Run Forward", true);
-        }
-        else if (velocity.sqrMagnitude > Vector3.zero.sqrMagnitude && Mathf.Abs(velocity.sqrMagnitude) <= 0.1)
-        {
-            _animator.SetBool("Run Backward", false);
-            _animator.SetBool("Sit", false);
-            _animator.SetBool("Run Forward", false);
-            _animator.SetBool("Walk Backward", false);
-            _animator.SetBool("Walk Forward", true);
-        }
-        else if (velocity.sqrMagnitude < Vector3.zero.sqrMagnitude && Mathf.Abs(velocity.sqrMagnitude) >= 0.1)
-        {
-            _animator.SetBool("Run Forward", false);
-            _animator.SetBool("Sit", false);
-            _animator.SetBool("Walk Forward", false);
-            _animator.SetBool("Walk Backward", false);
-            _animator.SetBool("Run Backward", true);
-        }
-        else if (velocity.sqrMagnitude < Vector3.zero.sqrMagnitude && Mathf.Abs(velocity.sqrMagnitude) <= 0.1)
-        {
-            _animator.SetBool("Run Forward", false);
-            _animator.SetBool("Sit", false);
-            _animator.SetBool("Walk Forward", false);
-            _animator.SetBool("Run Backward", false);
-            _animator.SetBool("Walk Backward", true);
-        }
-        else
-        {
-            _animator.SetBool("Run Forward", false);
-            _animator.SetBool("Run Backward", false);
-            _animator.SetBool("Walk Forward", false);
-            _animator.SetBool("Walk Backward", false);
-            _animator.SetBool("Sit", true);
-        }
-
         acceleration = Vector3.zero;
-    }
-
-    public float GetDuration()
-    {
-        return this.duration;
     }
 
     private void ApplyForce(Vector3 force)
@@ -148,23 +97,23 @@ public class EatHoney : MonoBehaviour
         acceleration += force / mass;
     }
 
-    void FindNearestHive()
+    void FindNearestPollen()
     {
         Collider[] closeObjectColliders = Physics.OverlapSphere(transform.position, searchRadius);
 
-        closestHive = null;
+        closestPollen = null;
         float closestDistance = Mathf.Infinity;
         bool closestFound = false;
 
         foreach (Collider closeObjectCollider in closeObjectColliders)
         {
-            if (closeObjectCollider.tag == hiveTag)
+            if (closeObjectCollider.tag == pollenTag)
             {
                 closestFound = true;
                 float distance = Vector3.Distance(transform.position, closeObjectCollider.transform.position);
                 if (distance < closestDistance)
                 {
-                    closestHive = closeObjectCollider.gameObject;;
+                    closestPollen = closeObjectCollider.gameObject;;
                     closestDistance = distance;
                 }
             }
@@ -181,8 +130,8 @@ public class EatHoney : MonoBehaviour
         // reset the search radius when a hive is found
         searchRadius = 10f;
 
-        // seek the hive
-        Vector3 direction = closestHive.transform.position - transform.position;
+        // seek the pollen
+        Vector3 direction = closestPollen.transform.position - transform.position;
         direction.Normalize();
 
         Vector3 desiredVelocity = direction * this.maxSpeed;
@@ -204,7 +153,7 @@ public class EatHoney : MonoBehaviour
         float perlinY = Mathf.PerlinNoise(yOffset, 0);
         float xVelocity = Unity.Mathematics.math.remap(0, 1, -this.maxSpeed, this.maxSpeed, perlinX);
         float zVelocity = Unity.Mathematics.math.remap(0, 1, -this.maxSpeed, this.maxSpeed, perlinY);
-        
+
         // change the speed of movement
         if (walkIntervalTimer <= 0)
         {
@@ -220,7 +169,7 @@ public class EatHoney : MonoBehaviour
             this.yOffset *= -1;
             turnIntervalTimer = turnIntervalDuration;
         }
-
+        
         this.xOffset += this.xIncrement;
         this.yOffset += this.yIncrement;
         velocity.x = xVelocity;
@@ -229,7 +178,7 @@ public class EatHoney : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Hive" && bear.GetHunger() < 20)
+        if (other.tag == "Pollen" && bee.GetHunger() < 20)
         {
             this.velocity = Vector3.zero;
             StartCoroutine(Eat(3));
@@ -238,24 +187,12 @@ public class EatHoney : MonoBehaviour
 
     IEnumerator Eat(float duration)
     {
-        this.duration = duration;
-        eatingBar.gameObject.SetActive(true);
         canMove = false;
 
-        while (this.duration > 0)
-        {
-            StartCoroutine(bearHUD.UpdateTimeEating());
-            yield return new WaitForSeconds(1f);
-            this.duration -= 1;
-        }
-
-        eatingBar.gameObject.SetActive(false);
-
-        int healthGained = Random.Range(2, 8);
-        bear.Heal(healthGained);
+        yield return new WaitForSeconds(duration);
 
         int hungerGained = Random.Range(20, 40);
-        bear.GainHunger(hungerGained);
+        bee.GainHunger(hungerGained);
 
         canMove = true;
     }

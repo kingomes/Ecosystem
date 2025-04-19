@@ -7,6 +7,7 @@ TagManager:
   - Hive
   - Bear
   - EatingBar
+  - Pollen
   layers:
   - Default
   - TransparentFX

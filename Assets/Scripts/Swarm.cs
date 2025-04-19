@@ -2,12 +2,14 @@ using UnityEngine;
 
 public class Swarm : MonoBehaviour
 {
+    // bees' forces
     [SerializeField] private Vector3 acceleration;
     [SerializeField] private Vector3 velocity;
     [SerializeField] private float maxSpeed;
     [SerializeField] private float mass;
     [SerializeField] private float maxForce;
 
+    // the bear to swarm
     private GameObject bear;
     private string bearTag = "Bear";
 
@@ -24,7 +26,8 @@ public class Swarm : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (bear != null) {
+        if (bear)
+        {
             SwarmBear();
         }
 
