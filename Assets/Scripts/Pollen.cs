@@ -5,7 +5,7 @@ public class Pollen : MonoBehaviour
 {
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Bee")
+        if (other.tag == "Bee" && other.gameObject.GetComponent<Bee>().GetHunger() < 20)
         {
             StartCoroutine(GetEaten(3));
         }

@@ -5,7 +5,7 @@ public class Hive : MonoBehaviour
 {
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Bear")
+        if (other.tag == "Bear" && other.gameObject.GetComponent<Bear>().GetHunger() < 20)
         {
             StartCoroutine(GetEaten(3));
         }
