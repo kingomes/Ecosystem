@@ -42,9 +42,14 @@ public class EatHoney : MonoBehaviour
     [SerializeField] private ProgressBar eatingBar;
     
     // how far the bear can see hives
-    float searchRadius = 10f;
-    float maxSearchRadius = 50f;
-    float searchGrowthRate = 5f;
+    float searchRadius;
+    float maxSearchRadius;
+    float searchGrowthRate;
+
+    // 
+    private float circleDistance;
+    private float circleRadius;
+    private float wanderAngleChange;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -71,6 +76,10 @@ public class EatHoney : MonoBehaviour
 
         turnIntervalDuration = Random.Range(2, 5);
         turnIntervalTimer = 0;
+
+        searchRadius = 10f;
+        maxSearchRadius = 100f;
+        searchGrowthRate = 5f;
     }
 
     void FixedUpdate()
@@ -195,7 +204,7 @@ public class EatHoney : MonoBehaviour
 
     void Wander()
     {
-        // reduce the time left on the timers
+        //reduce the time left on the timers
         walkIntervalTimer -= Time.deltaTime;
         turnIntervalTimer -= Time.deltaTime;
 
@@ -218,6 +227,14 @@ public class EatHoney : MonoBehaviour
         {
             this.xOffset *= -1;
             this.yOffset *= -1;
+
+            // Bias toward center
+            Vector2 centerVelocity = Vector2.zero;
+            Vector2 offset = new Vector2(xOffset, yOffset);
+            offset = Vector2.SmoothDamp(offset, Vector2.zero, ref centerVelocity, 5f); // 5 sec to fully settle
+            xOffset = offset.x;
+            yOffset = offset.y;
+
             turnIntervalTimer = turnIntervalDuration;
         }
 

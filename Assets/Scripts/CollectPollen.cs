@@ -40,9 +40,9 @@ public class CollectPollen : MonoBehaviour
     Bee bee;
 
     // how far the bees can see pollen
-    float searchRadius = 10f;
-    float maxSearchRadius = 50f;
-    float searchGrowthRate = 5f;
+    float searchRadius;
+    float maxSearchRadius;
+    float searchGrowthRate;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -67,6 +67,10 @@ public class CollectPollen : MonoBehaviour
 
         turnIntervalDuration = Random.Range(2, 5);
         turnIntervalTimer = 0;
+
+        searchRadius = 10f;
+        maxSearchRadius = 100f;
+        searchGrowthRate = 5f;
     }
 
     void FixedUpdate()
@@ -87,7 +91,10 @@ public class CollectPollen : MonoBehaviour
             velocity.y = 0;
             this.transform.position += velocity;
 
-            transform.rotation = Quaternion.LookRotation(velocity, Vector3.up);
+            Quaternion targetRotation = Quaternion.LookRotation(velocity, Vector3.up);
+            Quaternion correction = Quaternion.Euler(0, -90f, 0); // correct it because bee was imported looking towards x axis, not z axis
+
+            transform.rotation = targetRotation * correction;
         }
         acceleration = Vector3.zero;
     }
@@ -169,7 +176,14 @@ public class CollectPollen : MonoBehaviour
             this.yOffset *= -1;
             turnIntervalTimer = turnIntervalDuration;
         }
-        
+
+        // Bias toward center
+        Vector2 centerVelocity = Vector2.zero;
+        Vector2 offset = new Vector2(xOffset, yOffset);
+        offset = Vector2.SmoothDamp(offset, Vector2.zero, ref centerVelocity, 5f); // 5 sec to fully settle
+        xOffset = offset.x;
+        yOffset = offset.y;
+
         this.xOffset += this.xIncrement;
         this.yOffset += this.yIncrement;
         velocity.x = xVelocity;

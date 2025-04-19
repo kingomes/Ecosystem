@@ -466,6 +466,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bear: {fileID: 567653218}
+  panSpeed: 0.5
+  zoomSpeed: 5
+  rotationSpeed: 3
+  minZoom: 5
+  maxZoom: 50
 --- !u!1 &333174795
 GameObject:
   m_ObjectHideFlags: 0
